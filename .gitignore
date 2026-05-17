@@ -1,0 +1,35 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Backend
+backend/node_modules/
+backend/.env
+
+# Node (root)
+node_modules/
+
+# Env files (root)
+.env
+.env.*
+
+# Logs
+*.log
+
+# Coverage / cache
+coverage/
+.cache/
+*.lcov
+
+# OS
+.DS_Store
+Thumbs.db
+

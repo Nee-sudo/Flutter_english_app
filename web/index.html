@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Learn English tenses through interactive stories">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Language Stories">
+
+  <title>Language Stories - Learn English Tenses</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" type="text/css" href="splash/style.css">
+
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #F8F9FA;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    #loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%);
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">Loading...</div>
+
+  <script>
+    function hideLoading() {
+      var el = document.getElementById('loading');
+      if (el) el.style.display = 'none';
+    }
+
+    window.addEventListener('flutter-first-frame', hideLoading);
+    window.addEventListener('load', function () {
+      setTimeout(hideLoading, 8000);
+    });
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "Language Stories",
+  "short_name": "Stories",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F8F9FA",
+  "theme_color": "#6366F1",
+  "description": "Learn English tenses through interactive stories",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}
