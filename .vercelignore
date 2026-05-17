@@ -1,0 +1,5 @@
+backend/
+.dart_tool/
+.pub-cache/
+*.md
+!README.md

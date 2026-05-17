@@ -1,0 +1,9 @@
+{
+  "name": "language-stories-web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Vercel build entrypoint for Flutter web",
+  "scripts": {
+    "build": "bash scripts/vercel-build.sh"
+  }
+}

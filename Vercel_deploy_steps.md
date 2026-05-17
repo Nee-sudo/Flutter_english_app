@@ -1,53 +1,47 @@
-# Vercel deploy (Flutter web)
+# Deploy Flutter web on Vercel
 
-## Why this approach
-Your Vercel build logs show: `flutter: command not found`.
-So Vercel cannot run `flutter build web`.
+## One-time setup
 
-Therefore: **build locally** and deploy the generated static files.
+1. Push this repo to GitHub (or GitLab / Bitbucket).
+2. In [Vercel](https://vercel.com), **Add New Project** and import the repository.
+3. Vercel reads `vercel.json` automatically:
+   - **Build command:** `npm run build` (installs Flutter on Linux, then `flutter build web`)
+   - **Output directory:** `build/web`
+4. Add an environment variable (Production + Preview):
 
----
+   | Name | Example |
+   |------|---------|
+   | `API_BASE_URL` | `https://your-backend.example.com/api` |
 
-## 1) Build locally
-From repo root:
+   Leave unset only for local-style testing; coupon/analytics calls need a reachable backend.
+
+5. Deploy. First build may take several minutes while Flutter is downloaded.
+
+## Optional: deploy from CLI
 
 ```bash
-flutter build web
+npm i -g vercel
+vercel
+# production:
+vercel --prod
 ```
 
-This should generate:
-- `build/web/*`
+Set `API_BASE_URL` in the Vercel project **Settings → Environment Variables** before promoting to production.
 
----
+## Local production build (same as Vercel)
 
-## 2) Update Vercel Project settings
-In Vercel UI for this project:
-
-- **Root Directory**: `.` (repo root — the folder containing `pubspec.yaml`)
-- **Build Command**: leave empty / set to `none`
-- **Output Directory**: `build/web`
-
-Then redeploy.
-
----
-
-## 3) Routing fix (already added)
-Ensure `vercel.json` exists at repo root with:
-
-```json
-{
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
+```bash
+flutter pub get
+flutter build web --release --dart-define=API_BASE_URL=https://your-backend.example.com/api
 ```
 
-This prevents blank screens when Flutter navigates to non-`/` routes.
+Serve `build/web` with any static host, or use `.\serve_web.ps1` on Windows.
 
----
+## Troubleshooting
 
-## 4) Verify
-After deployment:
-- Open the Vercel URL
-- If it shows splash only / white screen, open browser **DevTools → Console** and check for runtime errors.
-
+| Issue | Fix |
+|-------|-----|
+| `flutter: command not found` in logs | Ensure `vercel.json` uses `npm run build`, not `flutter build` directly. |
+| Blank page after load | Check browser console; confirm `vercel.json` rewrites are present. |
+| Coupon/API fails in production | Set `API_BASE_URL` in Vercel env vars and redeploy. |
+| Build timeout | Upgrade plan or retry; first Flutter install is slow. |
