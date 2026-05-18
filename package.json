@@ -2,9 +2,8 @@
   "name": "language-stories-web",
   "private": true,
   "version": "1.0.0",
-  "description": "Vercel build entrypoint for Flutter web",
+  "description": "Flutter web build entrypoint (Vercel / Render static)",
   "scripts": {
-    "start": "node backend/src/server.js",
     "build": "bash scripts/vercel-build.sh"
   }
 }

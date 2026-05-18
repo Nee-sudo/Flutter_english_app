@@ -1,0 +1,19 @@
+# Backend only — frontend is on Vercel.
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: language-stories-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: COUPON_CODE
+        value: NEER50
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        sync: false

@@ -11,7 +11,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+const corsOptions = process.env.FRONTEND_URL
+  ? {
+      origin: process.env.FRONTEND_URL.split(',').map((o) => o.trim()),
+      credentials: true,
+    }
+  : {};
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
