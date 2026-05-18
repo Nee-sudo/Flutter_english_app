@@ -51,7 +51,12 @@
     window.addEventListener('load', function () {
       setTimeout(hideLoading, 8000);
     });
+
+    // If user navigates directly to a client-side route (e.g. /adminLogin),
+    // Flutter web needs to receive the path.
+    window.flutterWebUrl = window.location.pathname;
   </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
+

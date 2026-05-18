@@ -11,12 +11,15 @@ class AppStateProvider extends ChangeNotifier {
   final _apiService = ApiService();
 
   late UserState _userState;
-  late List<Tense> _tenses = [];
-  late Map<String, List<Story>> _storiesByTense = {};
+
+  List<Tense> _tenses = [];
+  Map<String, List<Story>> _storiesByTense = {};
   bool _isLoading = false;
+
   String? _errorMessage;
 
   UserState get userState => _userState;
+
   List<Tense> get tenses => _tenses;
   Map<String, List<Story>> get storiesByTense => _storiesByTense;
   bool get isLoading => _isLoading;
@@ -42,11 +45,18 @@ class AppStateProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> reloadContent() async {
+    _errorMessage = null;
+    await _loadTenses();
+  }
+
   Future<void> _loadTenses() async {
     _isLoading = true;
+    notifyListeners();
     try {
       final tensesData = await _apiService.getTenses();
       _tenses = tensesData.map((t) => Tense.fromJson(t)).toList();
+      _storiesByTense = {};
       await _loadAllStories();
     } catch (e) {
       _errorMessage = 'Failed to load tenses: ${e.toString()}';

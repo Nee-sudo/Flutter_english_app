@@ -24,6 +24,7 @@ Browser → Vercel (Flutter web) → Render (Node API) → MongoDB Atlas
 | `COUPON_CODE` | `NEER50` |
 | `NODE_ENV` | `production` |
 | `FRONTEND_URL` | `https://your-app.vercel.app` |
+| `ADMIN_API_KEY` | Long random secret for adding premium stories (see [ADMIN_API.md](./ADMIN_API.md)) |
 
 - `PORT` is set automatically by Render — do not override.
 - `FRONTEND_URL`: your live Vercel URL(s), comma-separated if you have preview + production domains. Omit locally (CORS allows all in dev).

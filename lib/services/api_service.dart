@@ -83,8 +83,40 @@ class ApiService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> _fetchList(String url) async {
+    final response = await _client
+        .get(Uri.parse(url))
+        .timeout(const Duration(seconds: 10));
+
+    if (response.statusCode != 200) return [];
+
+    final data = _decodeJson(response.body);
+    final list = data['data'];
+    if (list is List) {
+      return list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    }
+    return [];
+  }
+
   Future<List<Map<String, dynamic>>> getTenses() async {
-    return [
+    final fromApi = await _fetchList(AppAPI.getTenses);
+    if (fromApi.isNotEmpty) return fromApi;
+
+    // If the backend is down or returns empty lists, keep the UI stable
+    // instead of failing hard.
+    return _mockTenses();
+  }
+
+  Future<List<Map<String, dynamic>>> getStoriesForTense(String tenseId) async {
+    final url = '${AppAPI.getStories}?tenseId=$tenseId';
+    final fromApi = await _fetchList(url);
+    if (fromApi.isNotEmpty) return fromApi;
+
+    // If the backend is down, return demo placeholders so UI doesn't crash.
+    return _mockStoriesForTense(tenseId);
+  }
+
+  List<Map<String, dynamic>> _mockTenses() => [
       {
         '_id': '1',
         'name': 'Present Simple',
@@ -110,9 +142,8 @@ class ApiService {
         'emoji': '🔄',
       },
     ];
-  }
 
-  Future<List<Map<String, dynamic>>> getStoriesForTense(String tenseId) async {
+  List<Map<String, dynamic>> _mockStoriesForTense(String tenseId) {
     final mockStories = {
       '1': [
         {

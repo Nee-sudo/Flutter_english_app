@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'services/state_provider.dart';
+
 import 'screens/home_screen.dart';
+import 'screens/admin_login_screen.dart';
+import 'screens/_admin_route_wrapper.dart';
+
+import 'services/state_provider.dart';
 import 'utils/constants.dart';
 
 void main() {
@@ -16,7 +20,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,18 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/adminLogin':
+            return MaterialPageRoute(builder: (_) => const AdminLoginScreen());
+          case '/admin':
+            return MaterialPageRoute(builder: (_) => const AdminRouteWrapper());
+          case '/':
+          default:
+            return MaterialPageRoute(builder: (_) => const HomeScreen());
+        }
+      },
     );
   }
 }

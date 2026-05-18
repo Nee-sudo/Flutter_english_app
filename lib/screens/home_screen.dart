@@ -25,6 +25,13 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            tooltip: 'Admin',
+            icon: const Icon(Icons.admin_panel_settings, color: Colors.white),
+            onPressed: () => Navigator.of(context).pushNamed('/admin'),
+          ),
+        ],
       ),
       body: Consumer<AppStateProvider>(
         builder: (context, provider, _) {

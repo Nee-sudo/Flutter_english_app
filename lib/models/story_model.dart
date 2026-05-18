@@ -17,15 +17,22 @@ class Story {
     this.category,
   });
 
-  factory Story.fromJson(Map<String, dynamic> json) => Story(
-        id: json['_id'] ?? json['id'] ?? '',
-        tenseId: json['tenseId'] ?? '',
+  factory Story.fromJson(Map<String, dynamic> json) {
+    final rawTenseId = json['tenseId'];
+    final tenseId = rawTenseId is Map
+        ? (rawTenseId['_id']?.toString() ?? '')
+        : (rawTenseId?.toString() ?? '');
+
+    return Story(
+        id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
+        tenseId: tenseId,
         title: json['title'] ?? '',
         englishText: json['englishText'] ?? '',
         hindiText: json['hindiText'] ?? '',
         isDemo: json['isDemo'] ?? false,
-        category: json['category'],
+        category: json['category']?.toString(),
       );
+  }
 
   Map<String, dynamic> toJson() => {
         '_id': id,

@@ -1,0 +1,123 @@
+import mongoose from 'mongoose';
+import { Tense, Story } from '../models/schemas.js';
+
+const seedTenses = [
+  {
+    name: 'Present Simple',
+    description: 'Habitual actions and facts',
+    emoji: '⏰',
+  },
+  {
+    name: 'Past Continuous',
+    description: 'Actions in progress in the past',
+    emoji: '📚',
+  },
+  {
+    name: 'Future Perfect',
+    description: 'Completed actions in the future',
+    emoji: '🚀',
+  },
+  {
+    name: 'Present Perfect Continuous',
+    description: 'Ongoing actions from past to present',
+    emoji: '🔄',
+  },
+];
+
+const storiesByTenseIndex = [
+  [
+    {
+      title: 'Demo: Daily Routine',
+      englishText:
+        'I wake up at 7 AM. I brush my teeth. I have breakfast. I go to school. I play football. I study. I go to sleep.',
+      hindiText:
+        'मैं सुबह 7 बजे जागता हूँ। मैं अपने दाँत ब्रश करता हूँ। मैं नाश्ता करता हूँ। मैं स्कूल जाता हूँ। मैं फुटबॉल खेलता हूँ। मैं पढ़ता हूँ। मैं सो जाता हूँ।',
+      isDemo: true,
+    },
+    {
+      title: "The Student's Day",
+      englishText:
+        'Rahul studies every day. He wakes up early. He reads books. He writes assignments. He helps his friends.',
+      hindiText:
+        'राहुल हर दिन पढ़ता है। वह जल्दी उठता है। वह किताबें पढ़ता है। वह काम लिखता है। वह अपने दोस्तों की मदद करता है।',
+      isDemo: false,
+    },
+  ],
+  [
+    {
+      title: "Demo: Yesterday's Event",
+      englishText:
+        'I was playing cricket when it started raining. My friends were running towards the shelter. The ball was flying in the air.',
+      hindiText:
+        'मैं क्रिकेट खेल रहा था जब बारिश होने लगी। मेरे दोस्त छत की ओर दौड़ रहे थे। गेंद हवा में उड़ रही थी।',
+      isDemo: true,
+    },
+    {
+      title: 'The Unexpected Visit',
+      englishText:
+        'While I was studying, my cousin was watching TV. My mother was cooking dinner. My father was reading news.',
+      hindiText:
+        'जबकि मैं पढ़ रहा था, मेरा चचेरा भाई टीवी देख रहा था। मेरी माँ रात का खाना बना रही थी। मेरे पिता समाचार पढ़ रहे थे।',
+      isDemo: false,
+    },
+  ],
+  [
+    {
+      title: 'Demo: Future Plans',
+      englishText:
+        'By next year, I will have completed my studies. I will have learned English. I will have achieved my dreams.',
+      hindiText:
+        'अगले साल तक, मैं अपनी पढ़ाई पूरी कर चुका होऊँगा। मैं अंग्रेजी सीख चुका होऊँगा। मैंने अपने सपने पूरे कर लिए होंगे।',
+      isDemo: true,
+    },
+    {
+      title: 'Success Story',
+      englishText:
+        'By the time you read this, I will have finished the project. My team will have delivered the solution. Everyone will have celebrated the success.',
+      hindiText:
+        'जब तक तुम यह पढ़ोगे, मैं परियोजना पूरी कर चुका होऊँगा। मेरी टीम समाधान दे चुकी होगी। सभी सफलता का जश्न मना चुके होंगे।',
+      isDemo: false,
+    },
+  ],
+  [
+    {
+      title: 'Demo: Ongoing Activity',
+      englishText:
+        'I have been learning English for 5 years. She has been working here since 2020. They have been living in this city for a long time.',
+      hindiText:
+        'मैं 5 साल से अंग्रेजी सीख रहा हूँ। वह 2020 से यहाँ काम कर रही है। वे लंबे समय से इस शहर में रह रहे हैं।',
+      isDemo: true,
+    },
+    {
+      title: 'Life Journey',
+      englishText:
+        'He has been studying hard for the exam. His parents have been supporting him throughout. His teachers have been guiding him.',
+      hindiText:
+        'वह परीक्षा के लिए कड़ी मेहनत कर रहा है। उसके माता-पिता पूरे समय उसका समर्थन कर रहे हैं। उसके शिक्षकों ने उसका मार्गदर्शन किया है।',
+      isDemo: false,
+    },
+  ],
+];
+
+export async function seedIfEmpty() {
+  if (mongoose.connection.readyState !== 1) return;
+
+  const tenseCount = await Tense.countDocuments();
+  if (tenseCount > 0) return;
+
+  console.log('📦 Seeding tenses and stories...');
+  const insertedTenses = await Tense.insertMany(seedTenses);
+
+  const storyDocs = [];
+  insertedTenses.forEach((tense, index) => {
+    const stories = storiesByTenseIndex[index] ?? [];
+    for (const story of stories) {
+      storyDocs.push({ ...story, tenseId: tense._id });
+    }
+  });
+
+  await Story.insertMany(storyDocs);
+  console.log(
+    `✅ Seeded ${insertedTenses.length} tenses and ${storyDocs.length} stories`,
+  );
+}

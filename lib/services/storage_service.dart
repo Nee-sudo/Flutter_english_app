@@ -4,6 +4,7 @@ import '../models/user_state_model.dart';
 import '../utils/constants.dart';
 
 class StorageService {
+  static const String adminKeyStorageKey = 'admin_key';
   static final StorageService _instance = StorageService._internal();
 
   factory StorageService() {
@@ -41,6 +42,18 @@ class StorageService {
 
   String? getUserId() {
     return _prefs.getString(AppConstants.userIdKey);
+  }
+
+  Future<void> saveAdminKey(String adminKey) async {
+    await _prefs.setString(adminKeyStorageKey, adminKey);
+  }
+
+  String? getAdminKey() {
+    return _prefs.getString(adminKeyStorageKey);
+  }
+
+  Future<void> clearAdminKey() async {
+    await _prefs.remove(adminKeyStorageKey);
   }
 
   Future<void> clear() async {

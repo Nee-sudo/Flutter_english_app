@@ -4,4 +4,4 @@ Set-Location $PSScriptRoot
 
 flutter pub get
 Write-Host 'Launching Flutter web app (Chrome)...'
-flutter run -d chrome --web-port=8080
+flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:5000/api
