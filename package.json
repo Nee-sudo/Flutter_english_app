@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "Vercel build entrypoint for Flutter web",
   "scripts": {
+    "start": "node backend/src/server.js",
     "build": "bash scripts/vercel-build.sh"
   }
 }
