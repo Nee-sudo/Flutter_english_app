@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../utils/api_uri.dart';
 import '../utils/constants.dart';
 
 class ApiService {
@@ -22,7 +23,7 @@ class ApiService {
     try {
       final response = await _client
           .post(
-            Uri.parse(AppAPI.verifyCoupon),
+            apiUri('coupon/verify'),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({'coupon': normalized}),
           )
@@ -35,6 +36,10 @@ class ApiService {
           success: true,
           message: (data['message'] as String?) ?? 'Valid coupon',
         );
+      }
+
+      if (response.statusCode >= 500) {
+        return _verifyCouponOffline(normalized);
       }
 
       return (
@@ -73,7 +78,7 @@ class ApiService {
   Future<bool> trackUser(String userId, String ipAddress) async {
     try {
       final response = await _client.post(
-        Uri.parse(AppAPI.trackUser),
+        apiUri('analytics/track'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'userId': userId, 'ipAddress': ipAddress}),
       );
@@ -83,9 +88,9 @@ class ApiService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> _fetchList(String url) async {
+  Future<List<Map<String, dynamic>>> _fetchList(String path) async {
     final response = await _client
-        .get(Uri.parse(url))
+        .get(apiUri(path))
         .timeout(const Duration(seconds: 10));
 
     if (response.statusCode != 200) return [];
@@ -99,7 +104,7 @@ class ApiService {
   }
 
   Future<List<Map<String, dynamic>>> getTenses() async {
-    final fromApi = await _fetchList(AppAPI.getTenses);
+    final fromApi = await _fetchList('tenses');
     if (fromApi.isNotEmpty) return fromApi;
 
     // If the backend is down or returns empty lists, keep the UI stable
@@ -108,8 +113,7 @@ class ApiService {
   }
 
   Future<List<Map<String, dynamic>>> getStoriesForTense(String tenseId) async {
-    final url = '${AppAPI.getStories}?tenseId=$tenseId';
-    final fromApi = await _fetchList(url);
+    final fromApi = await _fetchList('stories?tenseId=$tenseId');
     if (fromApi.isNotEmpty) return fromApi;
 
     // If the backend is down, return demo placeholders so UI doesn't crash.

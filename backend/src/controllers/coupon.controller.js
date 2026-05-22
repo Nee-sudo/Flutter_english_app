@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 export const verifyCoupon = (req, res) => {
   const { coupon } = req.body;
 

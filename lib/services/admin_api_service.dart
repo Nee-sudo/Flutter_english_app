@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../utils/constants.dart';
+import '../utils/api_uri.dart';
 
 class AdminApiService {
   static final AdminApiService _instance = AdminApiService._internal();
@@ -30,7 +30,7 @@ class AdminApiService {
   Future<List<Map<String, dynamic>>> listAdminTenses(String adminKey) async {
     final res = await _client
         .get(
-          Uri.parse('${AppAPI.baseUrl}/admin/tenses'),
+          apiUri('admin/tenses'),
           headers: _headers(adminKey),
         )
         .timeout(const Duration(seconds: 12));
@@ -53,11 +53,9 @@ class AdminApiService {
     String adminKey, {
     required String tenseId,
   }) async {
-    final url = '${AppAPI.baseUrl}/admin/stories?tenseId=$tenseId';
-
     final res = await _client
         .get(
-          Uri.parse(url),
+          apiUri('admin/stories?tenseId=$tenseId'),
           headers: _headers(adminKey),
         );
     final data = await _decodeJson(res.body);
@@ -82,11 +80,9 @@ class AdminApiService {
     required bool isDemo,
     String? category,
   }) async {
-    final url = '${AppAPI.baseUrl}/admin/stories';
-
     final res = await _client
         .post(
-          Uri.parse(url),
+          apiUri('admin/stories'),
           headers: _headers(adminKey),
           body: jsonEncode({
             'tenseId': tenseId,
@@ -118,11 +114,9 @@ class AdminApiService {
     String? category,
     String? tenseId,
   }) async {
-    final url = '${AppAPI.baseUrl}/admin/stories/$storyId';
-
     final res = await _client
         .put(
-          Uri.parse(url),
+          apiUri('admin/stories/$storyId'),
           headers: _headers(adminKey),
           body: jsonEncode({
             'title': title,
@@ -145,11 +139,9 @@ class AdminApiService {
   }
 
   Future<void> deleteStory(String adminKey, {required String storyId}) async {
-    final url = '${AppAPI.baseUrl}/admin/stories/$storyId';
-
     final res = await _client
         .delete(
-          Uri.parse(url),
+          apiUri('admin/stories/$storyId'),
           headers: _headers(adminKey),
         )
         .timeout(const Duration(seconds: 12));

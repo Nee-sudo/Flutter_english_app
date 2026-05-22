@@ -35,7 +35,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Consumer<AppStateProvider>(
         builder: (context, provider, _) {
-          if (provider.isLoading) {
+          if (!provider.isInitialized || provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
