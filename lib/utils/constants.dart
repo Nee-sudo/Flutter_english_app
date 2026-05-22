@@ -24,10 +24,11 @@ class AppSpacing {
 
 class AppAPI {
   /// Override at build time: `--dart-define=API_BASE_URL=https://your-api.com/api`
-  /// Local backend: `flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:5000/api`
+  /// Vercel (same deploy): `/api` — set automatically by vercel-build.sh
+  /// Local Express: `flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:5000/api`
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:5000/api',
+    defaultValue: '/api',
   );
   static const String verifyCoupon = '$baseUrl/coupon/verify';
   static const String trackUser = '$baseUrl/analytics/track';

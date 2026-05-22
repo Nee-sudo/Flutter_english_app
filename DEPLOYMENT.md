@@ -1,4 +1,16 @@
-# Production: Vercel (frontend) + Render (backend)
+# Production deployment
+
+## Recommended: Vercel only (serverless)
+
+Flutter web + API serverless functions on **one Vercel project**. See **[VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md)**.
+
+```text
+Browser → your-app.vercel.app → /api/* (serverless) → MongoDB Atlas
+```
+
+---
+
+## Alternative: Vercel (frontend) + Render (backend)
 
 ## Architecture
 

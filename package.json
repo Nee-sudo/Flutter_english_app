@@ -1,9 +1,14 @@
 {
-  "name": "language-stories-web",
+  "name": "language-stories",
   "private": true,
   "version": "1.0.0",
-  "description": "Flutter web build entrypoint (Vercel / Render static)",
+  "description": "Flutter web + Vercel serverless API",
+  "type": "module",
   "scripts": {
-    "build": "bash scripts/vercel-build.sh"
+    "build": "bash scripts/vercel-build.sh",
+    "dev:api": "vercel dev"
+  },
+  "dependencies": {
+    "mongoose": "^7.5.0"
   }
 }

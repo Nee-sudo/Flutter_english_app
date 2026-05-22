@@ -1,5 +1,6 @@
-backend/
 .dart_tool/
 .pub-cache/
+backend/node_modules/
 *.md
 !README.md
+!VERCEL_DEPLOY.md

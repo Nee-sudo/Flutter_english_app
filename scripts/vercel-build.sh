@@ -20,7 +20,9 @@ flutter config --enable-web --no-analytics
 flutter precache --web
 flutter pub get
 
-API_BASE_URL="${API_BASE_URL:-http://localhost:5000/api}"
+# Same-origin API on Vercel: /api (serverless functions in /api folder)
+# Override in Vercel env only if API is hosted elsewhere
+API_BASE_URL="${API_BASE_URL:-/api}"
 echo "Building Flutter web (API_BASE_URL=$API_BASE_URL)..."
 
 flutter build web --release --dart-define="API_BASE_URL=$API_BASE_URL"

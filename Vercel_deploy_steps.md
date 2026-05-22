@@ -1,19 +1,20 @@
-# Deploy Flutter web on Vercel
+# Deploy on Vercel (serverless full stack)
 
-## One-time setup
+See **[VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md)** for the complete guide.
 
-1. Push this repo to GitHub (or GitLab / Bitbucket).
-2. In [Vercel](https://vercel.com), **Add New Project** and import the repository.
-3. Vercel reads `vercel.json` automatically:
-   - **Build command:** `npm run build` (installs Flutter on Linux, then `flutter build web`)
-   - **Output directory:** `build/web`
-4. Add an environment variable (Production + Preview):
+## Quick setup
 
-   | Name | Example |
-   |------|---------|
-   | `API_BASE_URL` | `https://your-backend.example.com/api` |
+1. Push this repo to GitHub and import in [Vercel](https://vercel.com).
+2. `vercel.json` builds Flutter → `build/web` and deploys `/api/*` serverless functions.
+3. Set environment variables in Vercel:
 
-   Leave unset only for local-style testing; coupon/analytics calls need a reachable backend.
+   | Name | Required |
+   |------|----------|
+   | `MONGO_URI` | Yes |
+   | `ADMIN_API_KEY` | Yes (admin panel) |
+   | `COUPON_CODE` | No (default `NEER50`) |
+
+   Leave `API_BASE_URL` **unset** — the app uses same-origin `/api`.
 
 5. Deploy. First build may take several minutes while Flutter is downloaded.
 
