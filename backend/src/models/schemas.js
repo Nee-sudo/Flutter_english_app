@@ -31,8 +31,18 @@ export const AnalyticsSchema = new mongoose.Schema({
   lastUpdated: { type: Date, default: Date.now },
 });
 
+export const PdfDownloadSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  language: { type: String, enum: ['english', 'hindi'], required: true },
+  storyCount: { type: Number, required: true },
+  downloadToken: { type: String, unique: true, required: true },
+  ipAddress: String,
+  userAgent: String,
+  createdAt: { type: Date, default: Date.now },
+});
+
 export const Tense = mongoose.model('Tense', TenseSchema);
 export const Story = mongoose.model('Story', StorySchema);
 export const User = mongoose.model('User', UserSchema);
 export const Analytics = mongoose.model('Analytics', AnalyticsSchema);
-
+export const PdfDownload = mongoose.model('PdfDownload', PdfDownloadSchema);
