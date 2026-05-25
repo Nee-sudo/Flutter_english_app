@@ -88,6 +88,54 @@ class ApiService {
     }
   }
 
+  Future<({bool success, String downloadToken, String message})> generatePdf(
+    String language, {
+    String? userId,
+  }) async {
+    try {
+      if (!['english', 'hindi'].contains(language)) {
+        return (
+          success: false,
+          downloadToken: '',
+          message: 'Invalid language. Must be "english" or "hindi"'
+        );
+      }
+
+      final response = await _client
+          .post(
+            apiUri('pdf/generate'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'language': language,
+              'userId': userId ?? 'anonymous',
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      final data = _decodeJson(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        return (
+          success: true,
+          downloadToken: (data['downloadToken'] as String?) ?? '',
+          message: (data['message'] as String?) ?? 'PDF generated successfully',
+        );
+      }
+
+      return (
+        success: false,
+        downloadToken: '',
+        message: (data['error'] as String?) ?? 'Failed to generate PDF',
+      );
+    } catch (e) {
+      return (
+        success: false,
+        downloadToken: '',
+        message: 'Error: ${e.toString()}',
+      );
+    }
+  }
+
   Future<List<Map<String, dynamic>>> _fetchList(String path) async {
     final response = await _client
         .get(apiUri(path))
@@ -226,4 +274,3 @@ class ApiService {
     return mockStories[tenseId] ?? [];
   }
 }
-
