@@ -115,7 +115,10 @@ class _StoryViewScreenState extends State<StoryViewScreen> {
           if (_selectedStory != null)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-              child: StoryDisplay(story: _selectedStory!),
+              child: StoryDisplay(
+                story: _selectedStory!,
+                tense: widget.tense,
+              ),
             ),
           SizedBox(height: AppSpacing.xl),
         ],
@@ -157,7 +160,10 @@ class _StoryViewScreenState extends State<StoryViewScreen> {
           child: _selectedStory != null
               ? Padding(
                   padding: EdgeInsets.all(AppSpacing.lg),
-                  child: StoryDisplay(story: _selectedStory!),
+                  child: StoryDisplay(
+                    story: _selectedStory!,
+                    tense: widget.tense,
+                  ),
                 )
               : const Center(
                   child: Text('Select a story to view'),

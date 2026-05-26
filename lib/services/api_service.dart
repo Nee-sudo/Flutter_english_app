@@ -88,16 +88,16 @@ class ApiService {
     }
   }
 
-  Future<({bool success, String downloadToken, String message})> generatePdf(
+  Future<({bool success, String message})> generatePdf(
     String language, {
     String? userId,
+    String? tenseId,
   }) async {
     try {
       if (!['english', 'hindi'].contains(language)) {
         return (
           success: false,
-          downloadToken: '',
-          message: 'Invalid language. Must be "english" or "hindi"'
+          message: 'Invalid language. Must be "english" or "hindi"',
         );
       }
 
@@ -108,31 +108,38 @@ class ApiService {
             body: jsonEncode({
               'language': language,
               'userId': userId ?? 'anonymous',
+              if (tenseId != null) 'tenseId': tenseId,
             }),
           )
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 60));
 
       final data = _decodeJson(response.body);
 
       if (response.statusCode == 200 && data['success'] == true) {
+        final downloadToken = data['downloadToken'] as String?;
+        
+        if (downloadToken != null && downloadToken.isNotEmpty) {
+          // Use token-based download
+          openDownloadUrl(
+            apiUri('pdf/download/$downloadToken').toString(),
+            'stories-$language.pdf',
+          );
+        }
+
         return (
           success: true,
-          downloadToken: (data['downloadToken'] as String?) ?? '',
-          message: (data['message'] as String?) ?? 'PDF generated successfully',
+          message: (data['message'] as String?) ?? 'PDF download started',
         );
       }
 
       return (
         success: false,
-        downloadToken: '',
-        message: (data['error'] as String?) ?? 'Failed to generate PDF',
+        message: (data['error'] as String?) ??
+            (data['message'] as String?) ??
+            'Failed to generate PDF',
       );
     } catch (e) {
-      return (
-        success: false,
-        downloadToken: '',
-        message: 'Error: ${e.toString()}',
-      );
+      return (success: false, message: 'Error: ${e.toString()}');
     }
   }
 

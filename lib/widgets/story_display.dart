@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import '../models/story_model.dart';
+import '../models/tense_model.dart';
+import '../services/api_service.dart';
 import '../utils/constants.dart';
 
 class StoryDisplay extends StatefulWidget {
   final Story story;
+  final Tense? tense;
 
   const StoryDisplay({
     Key? key,
     required this.story,
+    this.tense,
   }) : super(key: key);
 
   @override
@@ -16,6 +20,28 @@ class StoryDisplay extends StatefulWidget {
 
 class _StoryDisplayState extends State<StoryDisplay> {
   bool _showEnglish = true;
+  bool _isDownloading = false;
+
+  Future<void> _downloadPdf() async {
+    setState(() => _isDownloading = true);
+    
+    final language = _showEnglish ? 'english' : 'hindi';
+    final result = await ApiService().generatePdf(
+      language,
+      tenseId: widget.tense?.id,
+    );
+
+    if (mounted) {
+      setState(() => _isDownloading = false);
+      
+      final snackBar = SnackBar(
+        content: Text(result.message),
+        backgroundColor: result.success ? Colors.green : Colors.red,
+        duration: const Duration(seconds: 3),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +94,35 @@ class _StoryDisplayState extends State<StoryDisplay> {
                 ),
               ),
             ],
+          ),
+          SizedBox(height: AppSpacing.md),
+
+          ElevatedButton.icon(
+            onPressed: _isDownloading ? null : _downloadPdf,
+            icon: _isDownloading
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        _showEnglish ? Colors.white : Colors.white,
+                      ),
+                    ),
+                  )
+                : const Icon(Icons.download),
+            label: Text(_isDownloading ? 'Downloading...' : 'Download PDF'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _showEnglish
+                  ? AppColors.primary
+                  : AppColors.secondary,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(
+                vertical: AppSpacing.md,
+                horizontal: AppSpacing.lg,
+              ),
+              disabledBackgroundColor: AppColors.border,
+            ),
           ),
           SizedBox(height: AppSpacing.lg),
 
