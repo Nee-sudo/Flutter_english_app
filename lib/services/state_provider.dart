@@ -10,13 +10,19 @@ class AppStateProvider extends ChangeNotifier {
   final _storageService = StorageService();
   final _apiService = ApiService();
 
-  late UserState _userState;
+  UserState _userState = UserState(
+    userId: '',
+    isUnlocked: false,
+  );
 
   List<Tense> _tenses = [];
   Map<String, List<Story>> _storiesByTense = {};
-  bool _isLoading = false;
+  bool _isLoading = true;
+  bool _isInitialized = false;
 
   String? _errorMessage;
+
+  bool get isInitialized => _isInitialized;
 
   UserState get userState => _userState;
 
@@ -27,9 +33,14 @@ class AppStateProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   Future<void> init() async {
+    _isLoading = true;
+    notifyListeners();
+
     await _storageService.init();
     _loadUserState();
     await _loadTenses();
+
+    _isInitialized = true;
     notifyListeners();
   }
 
