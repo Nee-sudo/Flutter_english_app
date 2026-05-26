@@ -90,7 +90,7 @@ class ApiService {
 
   Future<List<Map<String, dynamic>>> _fetchList(String url) async {
     final response = await _client
-        .get(apiUri(path))
+        .get(apiUri(url))
         .timeout(const Duration(seconds: 10));
 
     if (response.statusCode != 200) return [];
