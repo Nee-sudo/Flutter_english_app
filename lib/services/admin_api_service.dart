@@ -152,5 +152,18 @@ class AdminApiService {
       throw Exception(data['message'] ?? 'Failed to delete story');
     }
   }
-}
 
+  Future<Map<String, dynamic>> getPdfStats() async {
+    final res = await _client
+        .get(apiUri('pdf/stats'))
+        .timeout(const Duration(seconds: 12));
+
+    final data = await _decodeJson(res.body);
+
+    if (res.statusCode != 200) {
+      throw Exception(data['error'] ?? 'Failed to fetch PDF statistics');
+    }
+
+    return Map<String, dynamic>.from(data);
+  }
+}

@@ -7,6 +7,7 @@ import couponRoutes from './routes/coupon.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import contentRoutes from './routes/content.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import pdfRoutes from './routes/pdf.routes.js';
 import { seedIfEmpty } from './seed/seedDatabase.js';
 
 dotenv.config();
@@ -68,6 +69,7 @@ mongoose
 
 app.use('/api/coupon', couponRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/pdf', pdfRoutes);
 app.use('/api', contentRoutes);
 app.use('/api/admin', adminRoutes);
 
@@ -88,4 +90,3 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-

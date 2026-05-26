@@ -88,7 +88,7 @@ class ApiService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> _fetchList(String path) async {
+  Future<List<Map<String, dynamic>>> _fetchList(String url) async {
     final response = await _client
         .get(apiUri(path))
         .timeout(const Duration(seconds: 10));
@@ -226,4 +226,3 @@ class ApiService {
     return mockStories[tenseId] ?? [];
   }
 }
-

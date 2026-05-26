@@ -17,7 +17,8 @@ class AdminDashboardScreen extends StatefulWidget {
   State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
 }
 
-class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+class _AdminDashboardScreenState extends State<AdminDashboardScreen>
+    with SingleTickerProviderStateMixin {
   final _api = AdminApiService();
 
   bool _loading = true;
@@ -33,10 +34,18 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   final _categoryCtrl = TextEditingController();
   bool _isDemo = true;
 
+  // PDF Stats
+  Map<String, dynamic>? _pdfStats;
+  bool _loadingPdfStats = false;
+
+  late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _load();
+    _loadPdfStats();
   }
 
   @override
@@ -45,6 +54,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     _englishCtrl.dispose();
     _hindiCtrl.dispose();
     _categoryCtrl.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -70,6 +80,26 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       _error = e.toString();
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _loadPdfStats() async {
+    setState(() => _loadingPdfStats = true);
+    try {
+      final stats = await _api.getPdfStats();
+      if (mounted) {
+        setState(() => _pdfStats = stats);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load PDF stats: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _loadingPdfStats = false);
+      }
     }
   }
 
@@ -187,7 +217,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
     bool isDemo = story.isDemo;
 
-  final save = await showDialog<bool>(
+    final save = await showDialog<bool>(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
@@ -335,10 +365,18 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         title: const Text(
-          'Admin — Manage Stories',
+          'Admin — Manage Stories & Analytics',
           style: TextStyle(color: Colors.white, fontSize: 18),
         ),
         centerTitle: true,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          tabs: const [
+            Tab(text: 'Stories'),
+            Tab(text: 'PDF Downloads'),
+          ],
+        ),
         actions: [
           IconButton(
             tooltip: 'Refresh',
@@ -357,85 +395,316 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ),
         ],
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _error!,
-                          style: const TextStyle(color: Colors.red),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _load,
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              : Padding(
-                  padding: EdgeInsets.all(
-                    isMobile ? AppSpacing.md : AppSpacing.lg,
-                  ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Stories Tab
+          _buildStoriesTab(isMobile),
+          // PDF Downloads Tab
+          _buildPdfStatsTab(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStoriesTab(bool isMobile) {
+    return _loading
+        ? const Center(child: CircularProgressIndicator())
+        : _error != null
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Add, edit, or delete English and Hindi story text. Changes sync to the public app immediately.',
-                        style: TextStyle(color: AppColors.textLight),
-                      ),
-                      const SizedBox(height: 12),
-                      DropdownButtonFormField<Tense>(
-                        initialValue: _selectedTense,
-                        decoration: const InputDecoration(
-                          labelText: 'Tense',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: _tenses
-                            .map(
-                              (t) => DropdownMenuItem(
-                                value: t,
-                                child: Text('${t.emoji} ${t.name}'),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (v) async {
-                          setState(() {
-                            _selectedTense = v;
-                            _stories = [];
-                          });
-                          await _refreshStories();
-                        },
+                        _error!,
+                        style: const TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
-                      Expanded(
-                        child: isMobile
-                            ? ListView(
-                                children: [
-                                  _buildCreateCard(),
-                                  const SizedBox(height: 16),
-                                  _buildStoriesCard(),
-                                ],
-                              )
-                            : Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(child: _buildCreateCard()),
-                                  const SizedBox(width: 16),
-                                  Expanded(flex: 2, child: _buildStoriesCard()),
-                                ],
-                              ),
+                      ElevatedButton(
+                        onPressed: _load,
+                        child: const Text('Retry'),
                       ),
                     ],
                   ),
                 ),
+              )
+            : Padding(
+                padding: EdgeInsets.all(
+                  isMobile ? AppSpacing.md : AppSpacing.lg,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Add, edit, or delete English and Hindi story text. Changes sync to the public app immediately.',
+                      style: TextStyle(color: AppColors.textLight),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<Tense>(
+                      initialValue: _selectedTense,
+                      decoration: const InputDecoration(
+                        labelText: 'Tense',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: _tenses
+                          .map(
+                            (t) => DropdownMenuItem(
+                              value: t,
+                              child: Text('${t.emoji} ${t.name}'),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (v) async {
+                        setState(() {
+                          _selectedTense = v;
+                          _stories = [];
+                        });
+                        await _refreshStories();
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: isMobile
+                          ? ListView(
+                              children: [
+                                _buildCreateCard(),
+                                const SizedBox(height: 16),
+                                _buildStoriesCard(),
+                              ],
+                            )
+                          : Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(child: _buildCreateCard()),
+                                const SizedBox(width: 16),
+                                Expanded(flex: 2, child: _buildStoriesCard()),
+                              ],
+                            ),
+                    ),
+                  ],
+                ),
+              );
+  }
+
+  Widget _buildPdfStatsTab() {
+    return _loadingPdfStats
+        ? const Center(child: CircularProgressIndicator())
+        : Padding(
+            padding: EdgeInsets.all(AppSpacing.lg),
+            child: _pdfStats == null
+                ? const Center(
+                    child: Text('Failed to load PDF statistics'),
+                  )
+                : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'PDF Download Statistics',
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        const SizedBox(height: 24),
+                        // Total Downloads Card
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Total PDF Downloads',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  (_pdfStats!['totalDownloads'] ?? 0)
+                                      .toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displaySmall
+                                      ?.copyWith(
+                                        color: AppColors.secondary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        // By Language Stats
+                        Text(
+                          'Downloads by Language',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 12),
+                        ..._buildLanguageStats(),
+                        const SizedBox(height: 24),
+                        // Recent Downloads
+                        Text(
+                          'Recent Downloads',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildRecentDownloads(),
+                      ],
+                    ),
+                  ),
+          );
+  }
+
+  List<Widget> _buildLanguageStats() {
+    final byLanguage =
+        (_pdfStats!['byLanguage'] as List<dynamic>?) ?? [];
+
+    if (byLanguage.isEmpty) {
+      return [
+        const Card(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(child: Text('No downloads yet')),
+          ),
+        ),
+      ];
+    }
+
+    return byLanguage.map<Widget>((stat) {
+      final lang =
+          (stat['_id'] as String?)?.toUpperCase() ?? 'Unknown';
+      final count = (stat['count'] as num?)?.toInt() ?? 0;
+      final avgStoryCount =
+          (stat['avgStoryCount'] as num?)?.toDouble() ?? 0;
+
+      return Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: lang == 'ENGLISH'
+                      ? Colors.blue.withOpacity(0.2)
+                      : Colors.orange.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    lang == 'ENGLISH' ? '🇬🇧' : '🇮🇳',
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      lang,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Downloads: $count | Avg Stories: ${avgStoryCount.toStringAsFixed(1)}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.secondary.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  count.toString(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.secondary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }).toList();
+  }
+
+  Widget _buildRecentDownloads() {
+    final recentDownloads =
+        (_pdfStats!['recentDownloads'] as List<dynamic>?) ?? [];
+
+    if (recentDownloads.isEmpty) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: Text('No recent downloads')),
+        ),
+      );
+    }
+
+    return Card(
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: recentDownloads.length,
+        separatorBuilder: (_, __) => const Divider(height: 1),
+        itemBuilder: (_, index) {
+          final download = recentDownloads[index] as Map<dynamic, dynamic>;
+          final language =
+              (download['language'] as String?)?.toUpperCase() ?? 'Unknown';
+          final storyCount =
+              (download['storyCount'] as num?)?.toInt() ?? 0;
+          final createdAt = (download['createdAt'] as String?) ?? 'Unknown';
+
+          return Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Text(
+                  language == 'ENGLISH' ? '🇬🇧' : '🇮🇳',
+                  style: const TextStyle(fontSize: 20),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '$language - $storyCount stories',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        createdAt,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
