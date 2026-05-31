@@ -6,6 +6,8 @@ import '../services/state_provider.dart';
 import '../widgets/story_display.dart';
 import '../widgets/paywall_modal.dart';
 import '../utils/constants.dart';
+import '../widgets/bottom_navigation.dart';
+
 
 class StoryViewScreen extends StatefulWidget {
   final Tense tense;
@@ -81,7 +83,15 @@ class _StoryViewScreenState extends State<StoryViewScreen> {
           body: isMobile
               ? _buildMobileLayout(stories, provider)
               : _buildDesktopLayout(stories, provider),
+          bottomNavigationBar: BottomNavigationBarWidget(
+            currentTab: AppTab.stories,
+            onTabSelected: (tab) {
+              Navigator.of(context).pushNamedAndRemoveUntil('/', (r) => false);
+            },
+          ),
+
         );
+
       },
     );
   }

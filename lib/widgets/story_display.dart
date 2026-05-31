@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/story_model.dart';
 import '../utils/constants.dart';
+import 'app_card.dart';
+
 
 class StoryDisplay extends StatefulWidget {
   final Story story;
@@ -71,13 +73,8 @@ class _StoryDisplayState extends State<StoryDisplay> {
           ),
           SizedBox(height: AppSpacing.lg),
 
-          Container(
-            padding: EdgeInsets.all(AppSpacing.md),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
-            ),
+          AppCard(
+            radius: 12,
             child: Text(
               _showEnglish ? widget.story.englishText : widget.story.hindiText,
               style: TextStyle(
@@ -88,6 +85,9 @@ class _StoryDisplayState extends State<StoryDisplay> {
               textAlign: TextAlign.justify,
             ),
           ),
+
+
+
         ],
       ),
     );

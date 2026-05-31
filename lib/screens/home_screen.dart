@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../services/state_provider.dart';
-import '../widgets/tense_card.dart';
 import '../utils/constants.dart';
+import '../widgets/app_card.dart';
+import '../widgets/bottom_navigation.dart';
+import '../widgets/tense_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -70,22 +73,26 @@ class HomeScreen extends StatelessWidget {
                   ),
                   SizedBox(height: AppSpacing.lg),
 
-                  Container(
-                    padding: EdgeInsets.all(AppSpacing.md),
-                    decoration: BoxDecoration(
-                      color: provider.isUnlocked
-                          ? AppColors.secondary
-                          : AppColors.locked,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                  AppCard(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    elevated: false,
+                    radius: 14,
                     child: Row(
                       children: [
-                        Icon(
-                          provider.isUnlocked
-                              ? Icons.check_circle
-                              : Icons.lock,
-                          color: Colors.white,
-                          size: 24,
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: provider.isUnlocked
+                                ? AppColors.secondary
+                                : AppColors.locked,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            provider.isUnlocked ? Icons.check : Icons.lock,
+                            color: Colors.white,
+                            size: 22,
+                          ),
                         ),
                         SizedBox(width: AppSpacing.md),
                         Expanded(
@@ -94,8 +101,9 @@ class HomeScreen extends StatelessWidget {
                                 ? '✨ Premium unlocked! Full access enabled.'
                                 : '🔒 Demo stories only. Enter coupon to unlock.',
                             style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: AppColors.textDark,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -125,7 +133,16 @@ class HomeScreen extends StatelessWidget {
           );
         },
       ),
+      bottomNavigationBar: BottomNavigationBarWidget(
+        currentTab: AppTab.home,
+        onTabSelected: (tab) {
+          // Both tabs navigate to the existing HomeScreen.
+          Navigator.of(context).pushNamedAndRemoveUntil('/', (r) => false);
+        },
+      ),
     );
   }
 }
+
+
 
