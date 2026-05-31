@@ -28,7 +28,7 @@ class AppAPI {
   /// Local Express: `flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:5000/api`
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: '/api',
+    defaultValue: 'http://localhost:5000/api',
   );
   static const String verifyCoupon = '$baseUrl/coupon/verify';
   static const String trackUser = '$baseUrl/analytics/track';
