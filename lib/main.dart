@@ -73,29 +73,54 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Language Stories',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-          brightness: Brightness.light,
+      final lightScheme = ColorScheme.fromSeed(
+        seedColor: AppColors.primary,
+        brightness: Brightness.light,
+      );
+
+      final darkScheme = ColorScheme.fromSeed(
+        seedColor: AppColors.primary,
+        brightness: Brightness.dark,
+      );
+
+      return MaterialApp(
+        title: 'Language Stories',
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: lightScheme,
+          inputDecorationTheme: const InputDecorationTheme(
+            isDense: true,
+            filled: true,
+            fillColor: AppColors.background,
+          ),
+          textTheme: Typography.material2021().black.apply(
+            fontFamily: null,
+          ).apply(),
         ),
-      ),
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/adminLogin':
-            return MaterialPageRoute(builder: (_) => const AdminLoginScreen());
-          case '/admin':
-            return MaterialPageRoute(builder: (_) => const AdminRouteWrapper());
-          case '/':
-          default:
-            return MaterialPageRoute(builder: (_) => const HomeScreen());
-        }
-      },
-    );
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: darkScheme,
+          inputDecorationTheme: const InputDecorationTheme(
+            isDense: true,
+            filled: true,
+            fillColor: AppDarkColors.surface,
+          ),
+        ),
+        themeMode: ThemeMode.system,
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case '/adminLogin':
+              return MaterialPageRoute(builder: (_) => const AdminLoginScreen());
+            case '/admin':
+              return MaterialPageRoute(builder: (_) => const AdminRouteWrapper());
+            case '/':
+            default:
+              return MaterialPageRoute(builder: (_) => const HomeScreen());
+          }
+        },
+      );
   }
 }
 

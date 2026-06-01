@@ -123,19 +123,19 @@ class ApiService {
   List<Map<String, dynamic>> _mockTenses() => [
       {
         '_id': '1',
-        'name': 'Present Simple',
+        'name': 'Present Tense Stories',
         'description': 'Habitual actions and facts',
         'emoji': '⏰',
       },
       {
         '_id': '2',
-        'name': 'Past Continuous',
+        'name': 'Past Tense Stories',
         'description': 'Actions in progress in the past',
         'emoji': '📚',
       },
       {
         '_id': '3',
-        'name': 'Future Perfect',
+        'name': 'Future Tense Stories',
         'description': 'Completed actions in the future',
         'emoji': '🚀',
       },

@@ -50,7 +50,24 @@ export const listStoriesByTense = async (req, res) => {
       });
     }
 
-    const stories = await Story.find({ tenseId }).sort({ isDemo: -1, createdAt: 1 });
+    // 1. Fetch the data from MongoDB (Sorting by isDemo first)
+    const stories = await Story.find({ tenseId }).sort({ isDemo: -1 });
+
+    // 2. Extract and numerically sort the documents by the number in the title string
+    stories.sort((a, b) => {
+      // If one is a demo and the other isn't, keep the isDemo sorting priority intact
+      if (a.isDemo !== b.isDemo) {
+        return b.isDemo - a.isDemo; 
+      }
+
+      // Extract the numbers from the beginning of the title (e.g. "19. Title" -> 19)
+      const numA = parseInt(a.title, 10) || 0;
+      const numB = parseInt(b.title, 10) || 0;
+
+      // Mathematically compare the values
+      return numA - numB;
+    });
+
     return res.status(200).json({
       success: true,
       data: stories.map(serializeStory),

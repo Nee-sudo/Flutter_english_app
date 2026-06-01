@@ -51,9 +51,10 @@ class PdfService {
 
       // Step 2: Download PDF using the token
       final downloadUrl = apiUri('pdf/download/$downloadToken');
-      final downloadLink = html.AnchorElement(href: downloadUrl)
+      final downloadLink = html.AnchorElement(href: downloadUrl.toString())
         ..setAttribute('download', 'stories-$language.pdf')
         ..click();
+
 
       return true;
     } catch (error) {
