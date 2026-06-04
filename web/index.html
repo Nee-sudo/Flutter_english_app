@@ -54,8 +54,11 @@
 
     // If user navigates directly to a client-side route (e.g. /adminLogin),
     // Flutter web needs to receive the path.
+    // Keep it as full path so routes like /policy are matched in onGenerateRoute.
     window.flutterWebUrl = window.location.pathname;
+    console.log('[flutter-web-url]', window.flutterWebUrl);
   </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
