@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/admin_login_screen.dart';
 import 'screens/_admin_route_wrapper.dart';
+import 'screens/policy_screen.dart';
+
 
 import 'services/state_provider.dart';
 import 'utils/constants.dart';
@@ -110,11 +112,13 @@ class MyApp extends StatelessWidget {
         ),
         themeMode: ThemeMode.system,
         onGenerateRoute: (settings) {
-          switch (settings.name) {
+        switch (settings.name) {
             case '/adminLogin':
               return MaterialPageRoute(builder: (_) => const AdminLoginScreen());
             case '/admin':
               return MaterialPageRoute(builder: (_) => const AdminRouteWrapper());
+            case '/policy':
+              return MaterialPageRoute(builder: (_) => const PolicyScreen());
             case '/':
             default:
               return MaterialPageRoute(builder: (_) => const HomeScreen());
@@ -123,4 +127,5 @@ class MyApp extends StatelessWidget {
       );
   }
 }
+
 
