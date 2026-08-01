@@ -1,7 +1,7 @@
 import PDFDocument from 'pdfkit';
 import { v4 as uuidv4 } from 'uuid';
 import { Story } from '../../backend/src/models/schemas.js';
-import { createHandler, methodNotAllowed } from '../lib/http.js';
+import { createHandler, methodNotAllowed } from '../_lib/http.js';
 
 function buildPdfBuffer(stories, language) {
   return new Promise((resolve, reject) => {

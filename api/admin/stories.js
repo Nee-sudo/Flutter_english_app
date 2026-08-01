@@ -1,5 +1,5 @@
-import { createHandler, methodNotAllowed } from '../lib/http.js';
-import { assertAdmin } from '../lib/adminAuth.js';
+import { createHandler, methodNotAllowed } from '../_lib/http.js';
+import { assertAdmin } from '../_lib/adminAuth.js';
 import {
   listAdminStories,
   createStory,

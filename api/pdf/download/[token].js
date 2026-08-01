@@ -1,4 +1,4 @@
-import { createHandler, methodNotAllowed } from '../../lib/http.js';
+import { createHandler, methodNotAllowed } from '../../_lib/http.js';
 
 // Token-based download is not reliable on serverless (no shared memory).
 // Clients should use pdfBase64 from POST /api/pdf/generate instead.

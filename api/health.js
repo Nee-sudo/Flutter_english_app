@@ -1,4 +1,4 @@
-import { createHandler, methodNotAllowed } from './lib/http.js';
+import { createHandler, methodNotAllowed } from './_lib/http.js';
 
 export default createHandler(
   async (req, res) => {
